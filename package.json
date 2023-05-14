@@ -1,0 +1,84 @@
+{
+    "name": "hello-world",
+    "description": "Please enter a brief description here",
+    "version": "0.0.1",
+    "files": [
+        "bin"
+    ],
+    "scripts": {
+        "build": "tsc -b tsconfig.json",
+        "watch": "tsc -b tsconfig.json --watch",
+        "lint": "eslint src --ext ts",
+        "langium:generate": "langium generate",
+        "langium:watch": "langium generate --watch",
+        "vscode:prepublish": "npm run build && npm run lint",
+        "build:worker": "esbuild --minify ./out/language/main-browser.js --bundle --format=iife --outfile=./public/hello-world-server-worker.js",
+        "prepare:public": "shx mkdir -p ./public && shx cp -fr ./src/static/* ./public/",
+        "copy:monaco-editor-wrapper": "shx cp -fr ./node_modules/monaco-editor-wrapper/bundle ./public/monaco-editor-wrapper",
+        "copy:monaco-workers": "shx cp -fr ./node_modules/monaco-editor-workers/dist/ ./public/monaco-editor-workers",
+        "copy:monarch-syntax": "shx cp -fr ./out/syntaxes/ ./public/syntaxes",
+        "build:web": "npm run build && npm run build:monarch && npm run prepare:public && npm run build:worker && npm run copy:monaco-editor-wrapper && npm run copy:monaco-workers && npm run copy:monarch-syntax",
+        "build:monarch": "tsc -b tsconfig.monarch.json",
+        "serve": "node ./out/web/app.js"
+    },
+    "dependencies": {
+        "chalk": "~4.1.2",
+        "commander": "~10.0.0",
+        "express": "~4.18.2",
+        "langium": "~1.2.0",
+        "lodash": "^4.17.21",
+        "monaco-editor-workers": "~0.34.2",
+        "monaco-editor-wrapper": "~1.6.0",
+        "vscode-languageclient": "~8.0.2"
+    },
+    "devDependencies": {
+        "@types/express": "^4.17.17",
+        "@types/lodash": "^4.14.194",
+        "@types/node": "~16.18.11",
+        "@types/vscode": "~1.67.0",
+        "@typescript-eslint/eslint-plugin": "~5.51.0",
+        "@typescript-eslint/parser": "~5.51.0",
+        "esbuild": "^0.16.14",
+        "eslint": "~8.33.0",
+        "langium-cli": "~1.2.0",
+        "shx": "^0.3.4",
+        "typescript": "~4.9.5"
+    },
+    "displayName": "hello-world",
+    "engines": {
+        "vscode": "^1.67.0",
+        "node": ">=14.0.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "hello-world",
+                "aliases": [
+                    "Hello World",
+                    "hello-world"
+                ],
+                "extensions": [
+                    ".hello"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "hello-world",
+                "scopeName": "source.hello-world",
+                "path": "./syntaxes/hello-world.tmLanguage.json"
+            }
+        ]
+    },
+    "activationEvents": [
+        "onLanguage:hello-world"
+    ],
+    "main": "./out/extension/main.js",
+    "bin": {
+        "hello-world-cli": "./bin/cli"
+    }
+}
